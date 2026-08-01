@@ -69,7 +69,7 @@ Vagrant.configure("2") do |config|
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    apt update && apt upgrade
+    apt update && apt upgrade -y
     apt install openssh-server -y
     systemctl enable --now ssh
   SHELL
