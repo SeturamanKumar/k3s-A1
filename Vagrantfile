@@ -72,5 +72,6 @@ Vagrant.configure("2") do |config|
     apt update && apt upgrade -y
     apt install openssh-server -y
     systemctl enable --now ssh
+    curl -sfL https://get.k3s.io | sh -
   SHELL
 end
