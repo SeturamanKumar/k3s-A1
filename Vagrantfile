@@ -69,15 +69,5 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", inline: <<-SHELL
-    apt update && apt upgrade -y
-    apt install openssh-server -y
-    systemctl enable --now ssh
-    curl -sfL https://get.k3s.io | sh -
-    sleep 120
-    cd /vagrant/
-    sudo kubectl apply -f deployment-nginx.yaml
-    sleep 60
-    sudo kubectl apply -f service.yaml
-  SHELL
+  config.vm.provision "shell", path: "startup.sh"
 end
