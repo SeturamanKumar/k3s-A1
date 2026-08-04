@@ -1,6 +1,44 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+servers = [
+  {
+    ip: "192.168.56.11",
+    name: "k3s-server-1",
+    hostname: "k3s-server-1",
+    main: true,
+  },
+  {
+    ip: "192.168.56.12",
+    name: "k3s-server-2",
+    hostname: "k3s-server-2",
+    main: false,
+  },
+  {
+    ip: "192.168.56.13",
+    name: "k3s-server-3",
+    hostname: "k3s-server-3",
+    main: false,
+  }
+]
+servers_workers = [
+  {
+    ip: "192.168.56.21",
+    name: "k3s-worker-1",
+    hostname: "k3s-worker-1",
+  },
+  {
+    ip: "192.168.56.22",
+    name: "k3s-worker-2",
+    hostname: "k3s-worker-2",
+  },
+  {
+    ip: "192.168.56.23",
+    name: "k3s-worker-3",
+    hostname: "k3s-worker-3",
+  }
+]
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -32,8 +70,9 @@ Vagrant.configure("2") do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  config.vm.network "private_network", ip: "192.168.56.9"
-  config.vm.network "forwarded_port", host: 8080, guest: 30007
+
+  # config.vm.network "private_network", ip: "192.168.56.9"
+  # config.vm.network "forwarded_port", host: 8080, guest: 30007
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -53,21 +92,52 @@ Vagrant.configure("2") do |config|
   # shown above.
   # config.vm.synced_folder ".", "/vagrant", disabled: true
 
+  servers.each do |server|
+
+    config.vm.define server[:name] do |ser|
+
+      ser.vm.hostname = server[:hostname]
+      ser.vm.network "private_network", ip: server[:ip]
+
+      ser.vm.provider "virtualbox" do |vb|
+        vb.memory = 2048
+        vb.cpus = 2
+      end
+
+      if server[:main]
+        ser.vm.provision "shell", path: "./startup_main.sh"
+      else
+        ser.vm.provision "shell", path: "./startup_master.sh", args: [server[:ip]]
+      end
+
+    end
+
+  end
+
+  # servers_workers.each do |server|
+  #
+  #   config.vm.define server[:name] do |ser|
+  #
+  #     ser.vm.hostname = server[:hostname]
+  #     ser.vm.network "private_network", ip: server[:ip]
+  #
+  #     ser.vm.provider "virtualbox" do |vb|
+  #       vb.memory = 1024
+  #       vb.cpus = 1
+  #     end
+  #
+  #   end
+  #
+  # end
+
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
-  #
-  config.vm.provider "virtualbox" do |vb|
-    # Customize the amount of memory on the VM:
-    vb.memory = 1024
-    vb.cpus = 2
-  end
-  #
   # View the documentation for the provider you are using for more
   # information on available options.
 
   # Enable provisioning with a shell script. Additional provisioners such as
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", path: "startup.sh"
+  # config.vm.provision "shell", path: "startup.sh"
 end
