@@ -114,21 +114,23 @@ Vagrant.configure("2") do |config|
 
   end
 
-  # servers_workers.each do |server|
-  #
-  #   config.vm.define server[:name] do |ser|
-  #
-  #     ser.vm.hostname = server[:hostname]
-  #     ser.vm.network "private_network", ip: server[:ip]
-  #
-  #     ser.vm.provider "virtualbox" do |vb|
-  #       vb.memory = 1024
-  #       vb.cpus = 1
-  #     end
-  #
-  #   end
-  #
-  # end
+  servers_workers.each do |server|
+
+    config.vm.define server[:name] do |ser|
+
+      ser.vm.hostname = server[:hostname]
+      ser.vm.network "private_network", ip: server[:ip]
+
+      ser.vm.provider "virtualbox" do |vb|
+        vb.memory = 1024
+        vb.cpus = 1
+      end
+
+      ser.vm.provision "shell", path: "./startup_agent.sh", args: [server[:ip]]
+
+    end
+
+  end
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
