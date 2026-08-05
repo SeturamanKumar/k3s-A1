@@ -17,3 +17,12 @@
 - Added the --tls-san "$IP" cause the default cert was for the loop back ip 10.0.2.15
 - Then the node were not discoverable to each, so added --node-ip to set the ip.
 > - Used ai for log interpretations
+
+## While adding agents in the cluster
+
+```bash
+#!/bin/bash
+curl -sfL https://get.k3s.io | K3S_URL="https://192.168.56.11:6443" K3S_TOKEN="$TOKEN" sh -s - agent --node-ip "$IP"
+```
+
+- It was not working when I added the --tls-san
