@@ -107,8 +107,10 @@ Vagrant.configure("2") do |config|
       if server[:main]
         ser.vm.provision "shell", path: "./startup_main.sh"
       else
-        ser.vm.provision "shell", path: "./startup_master.sh", args: [server[:ip]]
+        ser.vm.provision "shell", path: "./startup_master.sh", args: [server[:ip], server[:name]]
       end
+
+      ser.vm.provision "shell", inline: "cd /vagrant/ && sudo kubectl apply -f deployment-nginx.yaml && sudo kubectl apply -f service.yaml"
 
     end
 
